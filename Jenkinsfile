@@ -7,12 +7,21 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Dev Pipeline') {
-            when {
-                branch 'dev'
-            }
+
+        stage('Install Dependencies') {
             steps {
-                echo 'Running Dev Pipeline...'
+                bat '''
+                    python -m pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Training Script') {
+            steps {
+                bat '''
+                    python src/train.py
+                '''
             }
         }
     }
