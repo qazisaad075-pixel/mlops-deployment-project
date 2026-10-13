@@ -49,11 +49,12 @@ def train():
         mlflow.log_params(params)
         mlflow.log_metrics({"accuracy": acc, "precision": prec, "recall": rec, "f1_score": f1})
 
-        # Log and Register Model
+        # Log and Register Model with skops_trusted_types
         result = mlflow.sklearn.log_model(
             sk_model=clf,
             artifact_path="model",
-            registered_model_name=model_name
+            registered_model_name=model_name,
+            skops_trusted_types=["sklearn.tree._tree.Tree"]
         )
         
         client = MlflowClient()
