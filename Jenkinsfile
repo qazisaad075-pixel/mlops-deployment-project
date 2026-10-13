@@ -47,9 +47,12 @@ pipeline {
             when {
                 branch 'main'
             }
-            steps {
-                echo 'Running Pre-Prod Pipeline for Main Branch...'
-                // Pre-prod loading and re-aliasing script next step mein add karenge
+            stages {
+                stage('Load & Validate Challenger Model') {
+                    steps {
+                        bat 'python src/pre_prod_test.py'
+                    }
+                }
             }
         }
 
@@ -62,15 +65,13 @@ pipeline {
             }
             steps {
                 echo 'Running Prod Pipeline for Release Tag...'
-                // Prod loading and Champion aliasing script next step mein add karenge
             }
         }
     }
 
     post {
         failure {
-            echo 'Pipeline Failed! Sending Email Notification...'
-            // Failure notification logic
+            echo 'Pipeline Failed! Sending Notification...'
         }
     }
 }
