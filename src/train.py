@@ -4,22 +4,29 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.datasets import make_classification
 import mlflow
 import mlflow.sklearn
 from mlflow.tracking import MlflowClient
 
-# Absolute Central MLflow Tracking URI to avoid multi-workspace path issues
+# Absolute Central MLflow Tracking URI
 db_path = os.path.abspath("C:/Users/AhmadLap/mlflow.db")
 mlflow.set_tracking_uri(f"sqlite:///{db_path}")
 
 mlflow.set_experiment("Disease_Classification_Experiment")
 
 def train():
-    # Load dataset
     data_path = "data/disease_data.csv"
-    if not os.path.exists(data_path):
-        raise FileNotFoundError(f"Data file not found at {data_path}")
     
+    # Auto-generate dataset if file does not exist
+    if not os.path.exists(data_path):
+        os.makedirs("data", exist_ok=True)
+        X_dummy, y_dummy = make_classification(n_samples=200, n_features=5, random_state=42)
+        df_dummy = pd.DataFrame(X_dummy, columns=[f"feature_{i}" for i in range(5)])
+        df_dummy["target"] = y_dummy
+        df_dummy.to_csv(data_path, index=False)
+        print(f"Generated sample dataset at {data_path}")
+
     df = pd.read_csv(data_path)
     X = df.drop(columns=["target"])
     y = df["target"]
@@ -52,7 +59,7 @@ def train():
         client = MlflowClient()
         model_version = result.registered_model_version
         
-        # Set 'Challenger' alias for the newly trained model version
+        # Set 'Challenger' alias
         client.set_registered_model_alias(
             name=model_name,
             alias="Challenger",
