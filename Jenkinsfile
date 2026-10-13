@@ -1,3 +1,9 @@
+
+def runMLStage(String command) {
+    echo "Executing Shared Library Stage Command: ${command}"
+    bat command
+}
+
 pipeline {
     agent any
 
@@ -24,8 +30,10 @@ pipeline {
             stages {
                 stage("Data Ingest & Model Train") {
                     steps {
-                        runMLStage("python src/train.py")
-                        runMLStage("python src/train_logistic.py")
+                        script {
+                            runMLStage("python src/train.py")
+                            runMLStage("python src/train_logistic.py")
+                        }
                     }
                 }
             }
@@ -38,7 +46,9 @@ pipeline {
             stages {
                 stage("Load & Validate Challenger Model") {
                     steps {
-                        runMLStage("python src/pre_prod_test.py")
+                        script {
+                            runMLStage("python src/pre_prod_test.py")
+                        }
                     }
                 }
             }
@@ -51,8 +61,10 @@ pipeline {
             stages {
                 stage("Promote Model to Champion") {
                     steps {
-                        echo "Running Prod Pipeline for Release Tag..."
-                        runMLStage("python src/prod_deploy.py")
+                        script {
+                            echo "Running Prod Pipeline for Release Tag..."
+                            runMLStage("python src/prod_deploy.py")
+                        }
                     }
                 }
             }
