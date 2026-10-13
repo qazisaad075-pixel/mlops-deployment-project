@@ -72,8 +72,25 @@ pipeline {
     }
 
     post {
+        always {
+            emailext (
+                to: "sikaner@gmail.com",
+                subject: "MLOps Pipeline Notification: Job ${env.JOB_NAME} [Build #${env.BUILD_NUMBER}] - ${currentBuild.currentResult}",
+                body: """
+                    Hi Sir,
+
+                    The MLOps Pipeline execution for ${env.JOB_NAME} (Build #${env.BUILD_NUMBER}) has completed.
+
+                    Status: ${currentBuild.currentResult}
+                    Build URL: ${env.BUILD_URL}
+
+                    Regards,
+                    MLOps CI/CD Automation
+                """
+            )
+        }
         failure {
-            echo "Pipeline Failed! Sending Notification..."
+            echo "Pipeline Failed! Email Notification Sent."
         }
     }
 }
