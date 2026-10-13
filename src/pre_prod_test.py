@@ -24,9 +24,9 @@ def validate_pre_prod():
         model_version_info = client.get_model_version_by_alias(model_name, "Challenger")
         version_num = model_version_info.version
         
-        # Set 'Challenger pre-test' alias
-        client.set_registered_model_alias(model_name, "Challenger pre-test", version_num)
-        print(f"Model version {version_num} loaded and alias set to 'Challenger pre-test'")
+        # Set 'Challenger-pre-test' alias (Dash separated - valid name)
+        client.set_registered_model_alias(model_name, "Challenger-pre-test", version_num)
+        print(f"Model version {version_num} loaded and alias set to 'Challenger-pre-test'")
 
         data_path = "data/disease_data.csv"
         
@@ -48,8 +48,8 @@ def validate_pre_prod():
 
         # Quality Gate
         if acc >= 0.90:
-            client.set_registered_model_alias(model_name, "Challenger post-test", version_num)
-            print(f"Validation Passed! Updated alias to 'Challenger post-test' for version {version_num}")
+            client.set_registered_model_alias(model_name, "Challenger-post-test", version_num)
+            print(f"Validation Passed! Updated alias to 'Challenger-post-test' for version {version_num}")
         else:
             raise ValueError(f"Accuracy {acc:.4f} is below the required 0.90 threshold.")
 
