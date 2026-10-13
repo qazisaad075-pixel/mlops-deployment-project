@@ -74,7 +74,7 @@ pipeline {
     post {
         always {
             emailext (
-                to: "qazisaad075@gmail.com",
+                to: "sikaner@gmail.com",
                 subject: "MLOps Pipeline Notification: Job ${env.JOB_NAME} [Build #${env.BUILD_NUMBER}] - ${currentBuild.currentResult}",
                 body: """
                     Hi,
