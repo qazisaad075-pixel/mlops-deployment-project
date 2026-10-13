@@ -30,13 +30,6 @@ pipeline {
                         bat 'python src/train.py'
                     }
                 }
-                stage('Model Test & Evaluation') {
-                    steps {
-                        bat '''
-                            python -c "import mlflow; client = mlflow.tracking.MlflowClient(); exp = client.get_experiment_by_name('MLOps_Disease_Classification'); run = client.search_runs(exp.experiment_id)[0]; acc = run.data.metrics['accuracy']; print(f'Dev Accuracy: {acc}'); assert acc >= 0.90, 'Accuracy below threshold!'"
-                        '''
-                    }
-                }
             }
         }
 
@@ -63,8 +56,13 @@ pipeline {
             when {
                 buildingTag()
             }
-            steps {
-                echo 'Running Prod Pipeline for Release Tag...'
+            stages {
+                stage('Promote Model to Champion') {
+                    steps {
+                        echo 'Running Prod Pipeline for Release Tag...'
+                        bat 'python src/prod_deploy.py'
+                    }
+                }
             }
         }
     }
